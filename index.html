@@ -16,13 +16,24 @@
 
   <style>
     :root{
-      --bg1:#fff0f5;
-      --bg2:#ffe4ec;
-      --ink:#1a1a1a;
-      --accent:#ff4d6d;
+      --bgTop: #fff0f5;
+      --bgMid: #ffe4ec;
+      --bgGlow: #ffd1dc;
+
+      --ink: #161616;
+      --accent: #ff4d6d;
       --accent2:#ff7aa2;
+
       --paper:#fff7e6;
       --paper2:#ffefcc;
+
+      --riverTop: rgba(180,220,255,.14);
+      --riverMid: rgba(120,170,220,.26);
+      --riverDeep: rgba(40,90,150,.20);
+
+      --sunset1: #ff6a3d;
+      --sunset2: #ff3d85;
+      --sunset3: #7a3dff;
     }
 
     *{box-sizing:border-box}
@@ -33,57 +44,136 @@
       font-family:-apple-system, BlinkMacSystemFont, system-ui;
       color:var(--ink);
       background:
-        radial-gradient(900px 500px at 15% 20%, #ffd1dc, transparent),
-        radial-gradient(1000px 600px at 85% 25%, var(--bg2), transparent),
-        linear-gradient(180deg, var(--bg1), #fff);
+        radial-gradient(1000px 600px at 20% 18%, var(--bgGlow), transparent 60%),
+        radial-gradient(900px 520px at 85% 22%, var(--bgMid), transparent 60%),
+        linear-gradient(180deg, var(--bgTop), #fff);
       display:grid;
       place-items:center;
       padding:24px;
       overflow:hidden;
+      transition: background 900ms ease;
     }
 
-    /* 🌊 River + Boats */
-    .boats{
+    /* After YES -> sunset palette */
+    body.sunset{
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(255,106,61,.55), transparent 60%),
+        radial-gradient(900px 520px at 70% 20%, rgba(255,61,133,.45), transparent 60%),
+        radial-gradient(1000px 600px at 70% 70%, rgba(122,61,255,.22), transparent 65%),
+        linear-gradient(180deg, #fff0f3, #fff);
+    }
+
+    /* Background layers */
+    .bg{
       position:fixed;
       inset:0;
       pointer-events:none;
       z-index:0;
     }
-    .boats::before,
-    .boats::after{
-      content:"";
-      position:absolute;
-      bottom:8%;
-      width:260px;
-      height:120px;
-      background:rgba(255,255,255,.35);
-      border-radius:0 0 120px 120px;
-      box-shadow:inset 0 -10px 0 rgba(0,0,0,.05),
-                 0 18px 30px rgba(0,0,0,.12);
-      filter:blur(1px);
-    }
-    .boats::before{left:-60px; transform:rotate(-2deg)}
-    .boats::after{right:-70px; transform:rotate(2deg)}
 
+    /* River */
     .river{
       position:fixed;
       left:0; right:0; bottom:0;
-      height:35%;
-      background:linear-gradient(
-        180deg,
-        rgba(180,220,255,.15),
-        rgba(120,170,220,.28)
-      );
+      height:38%;
       z-index:0;
+      background:
+        linear-gradient(
+          180deg,
+          var(--riverTop),
+          var(--riverMid) 40%,
+          var(--riverDeep)
+        );
+      transition: background 900ms ease;
+      overflow:hidden;
     }
 
+    body.sunset .river{
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,180,140,.14),
+          rgba(255,120,160,.22) 40%,
+          rgba(70,70,130,.22)
+        );
+    }
+
+    /* Subtle shimmer bands */
+    .river::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        repeating-linear-gradient(
+          120deg,
+          rgba(255,255,255,.10),
+          rgba(255,255,255,.10) 10px,
+          transparent 10px,
+          transparent 26px
+        );
+      opacity:.35;
+      transform: translateY(12px);
+      filter: blur(1px);
+      animation: shimmer 7s linear infinite;
+    }
+    @keyframes shimmer{
+      0%{transform:translateX(-80px) translateY(12px)}
+      100%{transform:translateX(80px) translateY(12px)}
+    }
+
+    /* Animated barges */
+    .bargeLane{
+      position:absolute;
+      left:-30%;
+      right:-30%;
+      bottom:14%;
+      height:140px;
+      pointer-events:none;
+    }
+
+    .barge{
+      position:absolute;
+      bottom:0;
+      width:220px;
+      height:90px;
+      opacity:.95;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.15));
+    }
+
+    .barge.one{
+      left:-260px;
+      animation: drift1 18s linear infinite;
+      transform: scale(1.0);
+    }
+    .barge.two{
+      left:-320px;
+      bottom:20px;
+      transform: scale(.85);
+      opacity:.85;
+      animation: drift2 24s linear infinite;
+    }
+
+    @keyframes drift1{
+      0%{ transform: translateX(0) scale(1.0); }
+      100%{ transform: translateX(calc(100vw + 700px)) scale(1.0); }
+    }
+    @keyframes drift2{
+      0%{ transform: translateX(0) scale(.85); }
+      100%{ transform: translateX(calc(100vw + 900px)) scale(.85); }
+    }
+
+    /* Little light glows on barges, pop more at sunset */
+    body.sunset .barge .lightGlow{ opacity: .95; }
+    .lightGlow{ opacity: .55; transition: opacity 900ms ease; }
+
+    /* Foreground stage */
     .stage{
-      width:min(560px,100%);
+      width:min(580px,100%);
       position:relative;
       z-index:1;
     }
 
-    /* ✉️ Letter */
+    /* Letter */
     .letterWrap{perspective:1200px}
     .envelope{
       border-radius:22px;
@@ -91,6 +181,8 @@
       background:rgba(255,255,255,.85);
       box-shadow:0 24px 60px rgba(0,0,0,.12);
       backdrop-filter:blur(10px);
+      user-select:none;
+      cursor:pointer;
     }
     .paper{
       background:linear-gradient(180deg,var(--paper),var(--paper2));
@@ -99,8 +191,27 @@
       min-height:240px;
       transform-origin:top;
       transition:transform 700ms cubic-bezier(.2,.8,.2,1);
+      position:relative;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.06);
     }
     .paper.open{transform:rotateX(-180deg)}
+
+    .seal{
+      position:absolute;
+      right:16px;
+      bottom:16px;
+      width:44px;height:44px;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.2)),
+        linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      box-shadow:0 14px 26px rgba(255,77,109,.25);
+    }
 
     .openMe{
       display:grid;
@@ -109,144 +220,337 @@
       gap:10px;
       text-align:center;
     }
-    .openMe h1{margin:0;font-size:34px}
+    .openMe h1{margin:0;font-size:34px;letter-spacing:-0.03em}
     .openMe p{margin:0;opacity:.8}
+    .hint{font-size:13px;opacity:.68;margin-top:4px}
 
-    /* 💌 Card */
+    /* Invite card */
     .card{
       margin-top:18px;
       padding:20px;
       border-radius:22px;
       background:rgba(255,255,255,.85);
       box-shadow:0 18px 50px rgba(0,0,0,.12);
+      backdrop-filter: blur(10px);
       animation:pop .5s ease;
+      border:1px solid rgba(255,255,255,.8);
     }
     @keyframes pop{
       from{opacity:0;transform:translateY(10px)}
       to{opacity:1;transform:none}
     }
+    .card h2{
+      margin:0 0 6px;
+      font-size:28px;
+      letter-spacing:-0.02em;
+    }
+    .sub{margin:0 0 14px;opacity:.85;line-height:1.45}
 
     .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px}
     .chip{
       background:#fff;
       border-radius:999px;
       padding:8px 12px;
-      border:1px solid rgba(0,0,0,.1);
-      font-weight:600;
+      border:1px solid rgba(0,0,0,.10);
+      font-weight:650;
+      font-size:14px;
     }
 
     .actions{display:flex;gap:10px;flex-wrap:wrap}
 
-    button{
+    button, a.btn{
       border:0;
       border-radius:16px;
       padding:12px 16px;
       font-size:16px;
-      font-weight:800;
+      font-weight:850;
       cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
     }
     .yes{
       background:linear-gradient(135deg,var(--accent),var(--accent2));
       color:white;
+      box-shadow:0 14px 26px rgba(255,77,109,.22);
     }
     .no{
       background:white;
       border:1px solid rgba(0,0,0,.15);
+      color:#111;
+    }
+    .cal{
+      background:#fff;
+      border:1px solid rgba(0,0,0,.12);
+      color:#111;
     }
 
-    /* 🌀 No button panic spin */
+    /* No button panic spin */
     @keyframes panicSpin{
       0%{transform:translate(0,0) rotate(0)}
-      25%{transform:translate(120px,-80px) rotate(120deg)}
-      50%{transform:translate(-140px,60px) rotate(240deg)}
-      75%{transform:translate(100px,100px) rotate(360deg)}
-      100%{transform:translate(0,0) rotate(540deg)}
+      25%{transform:translate(130px,-90px) rotate(140deg)}
+      50%{transform:translate(-150px,70px) rotate(280deg)}
+      75%{transform:translate(110px,110px) rotate(420deg)}
+      100%{transform:translate(0,0) rotate(560deg)}
     }
     .spinning{animation:panicSpin 900ms cubic-bezier(.6,-0.28,.74,.05)}
   </style>
 </head>
 
 <body>
-  <div class="boats"></div>
-  <div class="river"></div>
+  <div class="bg"></div>
+
+  <div class="river" aria-hidden="true">
+    <div class="bargeLane" aria-hidden="true">
+      <!-- Barge 1 -->
+      <svg class="barge one bargeSvg" viewBox="0 0 220 90" role="img" aria-label="Barge silhouette">
+        <!-- hull -->
+        <path d="M18 58 Q30 72 52 72 H170 Q192 72 204 58 L212 40 H10 Z" fill="rgba(255,255,255,.42)"/>
+        <path d="M28 52 H196 L202 40 H22 Z" fill="rgba(0,0,0,.05)"/>
+        <!-- cabin -->
+        <rect x="68" y="22" width="80" height="28" rx="8" fill="rgba(255,255,255,.35)"/>
+        <rect x="78" y="28" width="18" height="14" rx="4" fill="rgba(255,255,255,.55)"/>
+        <rect x="102" y="28" width="18" height="14" rx="4" fill="rgba(255,255,255,.55)"/>
+        <rect x="126" y="28" width="18" height="14" rx="4" fill="rgba(255,255,255,.55)"/>
+        <!-- little lights -->
+        <circle class="lightGlow" cx="86" cy="35" r="6" fill="rgba(255,210,140,.55)"/>
+        <circle class="lightGlow" cx="110" cy="35" r="6" fill="rgba(255,210,140,.55)"/>
+        <circle class="lightGlow" cx="134" cy="35" r="6" fill="rgba(255,210,140,.55)"/>
+      </svg>
+
+      <!-- Barge 2 -->
+      <svg class="barge two bargeSvg" viewBox="0 0 220 90" role="img" aria-label="Barge silhouette">
+        <path d="M18 58 Q30 72 52 72 H170 Q192 72 204 58 L212 40 H10 Z" fill="rgba(255,255,255,.34)"/>
+        <path d="M28 52 H196 L202 40 H22 Z" fill="rgba(0,0,0,.05)"/>
+        <rect x="60" y="26" width="92" height="24" rx="8" fill="rgba(255,255,255,.28)"/>
+        <rect x="70" y="31" width="22" height="12" rx="4" fill="rgba(255,255,255,.48)"/>
+        <rect x="98" y="31" width="22" height="12" rx="4" fill="rgba(255,255,255,.48)"/>
+        <rect x="126" y="31" width="22" height="12" rx="4" fill="rgba(255,255,255,.48)"/>
+        <circle class="lightGlow" cx="82" cy="37" r="5" fill="rgba(255,210,140,.50)"/>
+        <circle class="lightGlow" cx="110" cy="37" r="5" fill="rgba(255,210,140,.50)"/>
+        <circle class="lightGlow" cx="138" cy="37" r="5" fill="rgba(255,210,140,.50)"/>
+      </svg>
+    </div>
+  </div>
+
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useRef } = React;
+    const { useEffect, useMemo, useRef, useState } = React;
 
+    // Confetti for opening the letter
     function confettiBurst(){
-      confetti({ particleCount:140, spread:90, origin:{x:.5,y:.25} });
+      confetti({
+        particleCount: 160,
+        spread: 90,
+        startVelocity: 45,
+        origin: { x: 0.5, y: 0.25 }
+      });
+      confetti({
+        particleCount: 90,
+        spread: 120,
+        startVelocity: 35,
+        origin: { x: 0.5, y: 0.30 },
+        scalar: 0.95
+      });
     }
 
-    function fireworks(){
-      const end = Date.now() + 1800;
+    // Fireworks + "reflection" bursts near the river
+    function fireworksWithReflection(){
+      const duration = 1900;
+      const end = Date.now() + duration;
+
       (function frame(){
-        confetti({ particleCount:30, spread:80, origin:{x:.25,y:.6} });
-        confetti({ particleCount:30, spread:80, origin:{x:.75,y:.6} });
-        confetti({ particleCount:40, spread:100, origin:{x:.5,y:.5} });
+        // Fireworks up in the sky (normal)
+        confetti({ particleCount: 28, spread: 80, startVelocity: 58, origin: { x: 0.25, y: 0.62 }, ticks: 230 });
+        confetti({ particleCount: 28, spread: 80, startVelocity: 58, origin: { x: 0.75, y: 0.62 }, ticks: 230 });
+        confetti({ particleCount: 38, spread: 100, startVelocity: 66, origin: { x: 0.50, y: 0.55 }, ticks: 250 });
+
+        // Reflection illusion on water:
+        // lower, flatter bursts that "sparkle" along the river surface
+        confetti({ particleCount: 18, spread: 35, startVelocity: 18, origin: { x: 0.28, y: 0.92 }, scalar: 0.85, ticks: 160 });
+        confetti({ particleCount: 18, spread: 35, startVelocity: 18, origin: { x: 0.72, y: 0.92 }, scalar: 0.85, ticks: 160 });
+        confetti({ particleCount: 22, spread: 40, startVelocity: 20, origin: { x: 0.50, y: 0.90 }, scalar: 0.90, ticks: 170 });
+
         if(Date.now() < end) requestAnimationFrame(frame);
       })();
     }
 
+    function buildICS({ title, startLocalISO, endLocalISO, location, description }) {
+      const pad = (n) => String(n).padStart(2, "0");
+      const toUTC = (localISO) => {
+        const d = new Date(localISO);
+        return (
+          d.getUTCFullYear()
+          + pad(d.getUTCMonth() + 1)
+          + pad(d.getUTCDate())
+          + "T"
+          + pad(d.getUTCHours())
+          + pad(d.getUTCMinutes())
+          + pad(d.getUTCSeconds())
+          + "Z"
+        );
+      };
+
+      const dtstamp = toUTC(new Date().toISOString().slice(0,19));
+      const dtstart = toUTC(startLocalISO);
+      const dtend   = toUTC(endLocalISO);
+
+      return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Valentine Invite//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+DTSTAMP:${dtstamp}
+DTSTART:${dtstart}
+DTEND:${dtend}
+SUMMARY:${title}
+LOCATION:${location}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+    }
+
     function App(){
-      const [opened,setOpened] = useState(false);
-      const [show,setShow] = useState(false);
-      const [noState,setNoState] = useState("normal");
-      const once = useRef(false);
+      const config = useMemo(() => ({
+        nickname: "Mya pookie",
+        question: "Will you be my Valentine?",
+        whenText: "Saturday • 5:00pm",
+        whereText: "Barge East, London",
+        vibeText: "Dinner on the river ",
+        note: "P.S. I love you",
+        calendar: {
+          title: "Valentine’s Date 💖",
+          startLocalISO: "2026-02-14T19:00:00",
+          endLocalISO:   "2026-02-14T22:00:00",
+          location: "Barge East, London",
+          description: "Dinner on the river + surprise "
+        }
+      }), []);
+
+      const [opened, setOpened] = useState(false);
+      const [showInvite, setShowInvite] = useState(false);
+
+      const [noState, setNoState] = useState("normal"); // normal -> spinning -> yes
+      const [accepted, setAccepted] = useState(false);
+
+      const didOpenFX = useRef(false);
+      const calUrlRef = useRef(null);
+
+      // Toggle sunset mode on body
+      useEffect(() => {
+        document.body.classList.toggle("sunset", accepted);
+      }, [accepted]);
+
+      // Cleanup object URL for calendar
+      useEffect(() => {
+        return () => {
+          if (calUrlRef.current) URL.revokeObjectURL(calUrlRef.current);
+        };
+      }, []);
 
       const openLetter = () => {
-        if(opened) return;
+        if (opened) return;
         setOpened(true);
-        if(!once.current){
-          once.current = true;
+
+        if(!didOpenFX.current){
+          didOpenFX.current = true;
           confettiBurst();
+          if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
         }
-        setTimeout(()=>setShow(true),650);
+
+        setTimeout(() => setShowInvite(true), 650);
+      };
+
+      const onYes = () => {
+        setAccepted(true);
+        fireworksWithReflection();
+        if (navigator.vibrate) navigator.vibrate([40, 20, 40, 20, 70]);
       };
 
       const onNo = () => {
-        if(noState!=="normal") return;
+        if (noState !== "normal") return;
         setNoState("spinning");
-        setTimeout(()=>setNoState("yes"),900);
+        confetti({ particleCount: 30, spread: 70, startVelocity: 35, origin: { x: Math.random(), y: 0.55 } });
+        if (navigator.vibrate) navigator.vibrate(20);
+
+        setTimeout(() => setNoState("yes"), 900);
       };
+
+      const calendarHref = useMemo(() => {
+        const ics = buildICS(config.calendar);
+        const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+
+        // store for cleanup
+        if (calUrlRef.current) URL.revokeObjectURL(calUrlRef.current);
+        calUrlRef.current = url;
+
+        return url;
+      }, [config]);
 
       return (
         <div className="stage">
           <div className="letterWrap">
-            <div className="envelope" onClick={openLetter}>
-              <div className={"paper "+(opened?"open":"")}>
+            <div
+              className="envelope"
+              role="button"
+              tabIndex={0}
+              aria-label="Open letter"
+              onClick={openLetter}
+              onKeyDown={(e) => e.key === "Enter" ? openLetter() : null}
+            >
+              <div className={"paper " + (opened ? "open" : "")}>
                 <div className="openMe">
-                  <div style={{fontSize:38}}>💌</div>
+                  <div style={{fontSize: 40}}>💌</div>
                   <h1>Open me</h1>
                   <p>Tap the letter</p>
+                  <div className="hint">(yes, this is your official invite)</div>
                 </div>
+                <div className="seal">♡</div>
               </div>
             </div>
           </div>
 
-          {show && (
-            <div className="card">
-              <h2>Hey my love 💖</h2>
-              <p>Will you be my Valentine?</p>
+          {showInvite && (
+            <div className="card" aria-label="Invitation">
+              <h2>Hey {config.nickname} 💖</h2>
+              <p className="sub">{config.question}</p>
 
               <div className="chips">
-                <span className="chip">🗓️ Friday</span>
-                <span className="chip">📍 Barge East</span>
-                <span className="chip">✨ Dinner on the river</span>
+                <span className="chip">🗓️ {config.whenText}</span>
+                <span className="chip">📍 {config.whereText}</span>
+                <span className="chip">✨ {config.vibeText}</span>
               </div>
 
               <div className="actions">
-                <button className="yes" onClick={fireworks}>Yes 💖</button>
+                <button className="yes" onClick={onYes}>Yes 💖</button>
 
-                {noState==="normal" && (
+                {noState === "normal" && (
                   <button className="no" onClick={onNo}>No 🙃</button>
                 )}
-                {noState==="spinning" && (
+                {noState === "spinning" && (
                   <button className="no spinning">No 😳</button>
                 )}
-                {noState==="yes" && (
-                  <button className="yes" onClick={fireworks}>Yes 💖</button>
+                {noState === "yes" && (
+                  <button className="yes" onClick={onYes}>Yes 💖</button>
                 )}
+
+                {accepted && (
+                  <a
+                    className="btn cal"
+                    href={calendarHref}
+                    download="valentines-barge-east.ics"
+                    rel="noopener"
+                  >
+                    Add to Calendar 📅
+                  </a>
+                )}
+              </div>
+
+              <div style={{marginTop: 12, fontSize: 13, opacity: .78, lineHeight: 1.45}}>
+                {accepted ? "Ok perfect. Screenshot this and send me ‘YES’ 😘" : config.note}
               </div>
             </div>
           )}
