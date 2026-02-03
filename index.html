@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#ff4d6d" />
+  <title>Valentine’s Invite 💌</title>
+  <style>
+    :root{
+      --bg1:#fff0f5;
+      --bg2:#ffe4ec;
+      --card:#ffffffcc;
+      --text:#1b1b1b;
+      --accent:#ff4d6d;
+      --accent2:#ff7aa2;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100svh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1000px 600px at 10% 10%, var(--bg2), transparent),
+                  radial-gradient(900px 500px at 90% 20%, #ffd1dc, transparent),
+                  linear-gradient(180deg, var(--bg1), #fff);
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+    .card{
+      width:min(520px, 100%);
+      background:var(--card);
+      border:1px solid #ffffff;
+      backdrop-filter: blur(10px);
+      border-radius:24px;
+      padding:22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+      position:relative;
+      overflow:hidden;
+    }
+    .hearts{
+      position:absolute; inset:-20px;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,77,109,.18) 0 40%, transparent 41%),
+        radial-gradient(circle at 80% 20%, rgba(255,122,162,.18) 0 35%, transparent 36%),
+        radial-gradient(circle at 60% 85%, rgba(255,77,109,.14) 0 38%, transparent 39%);
+      pointer-events:none;
+      filter: blur(1px);
+    }
+    h1{margin:0 0 6px; font-size:28px; letter-spacing:-0.02em;}
+    .sub{margin:0 0 14px; opacity:.85}
+    .hero{
+      border-radius:18px;
+      background: linear-gradient(135deg, rgba(255,77,109,.18), rgba(255,122,162,.18));
+      padding:14px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin:14px 0 16px;
+    }
+    .pic{
+      width:64px; height:64px; border-radius:18px;
+      background:#fff;
+      display:grid; place-items:center;
+      border:1px solid rgba(0,0,0,.06);
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .pic img{width:100%; height:100%; object-fit:cover; display:block}
+    .details{line-height:1.35}
+    .details b{display:block; margin-bottom:2px}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    .pill{
+      background:#fff;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:12px 12px;
+    }
+    .pill small{display:block; opacity:.7; margin-bottom:4px}
+    .pill div{font-weight:600}
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+    button,a.btn{
+      appearance:none;
+      border:0;
+      border-radius:16px;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .yes{background:linear-gradient(135deg, var(--accent), var(--accent2)); color:white; box-shadow:0 10px 22px rgba(255,77,109,.25)}
+    .maybe{background:#fff; border:1px solid rgba(0,0,0,.08); color:#111}
+    .note{
+      margin-top:14px;
+      font-size:13px;
+      opacity:.75;
+      line-height:1.45;
+    }
+    .toast{
+      margin-top:14px;
+      display:none;
+      background:#0f172a;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:14px;
+    }
+    @media (max-width:420px){
+      .row{grid-template-columns:1fr}
+      h1{font-size:26px}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card" role="main" aria-label="Valentine invitation">
+    <div class="hearts"></div>
+
+    <h1>Hey <span id="name">My Love</span> 💌</h1>
+    <p class="sub">I made you a tiny page for a tiny question…</p>
+
+    <section class="hero" aria-label="Invite details">
+      <div class="pic" aria-hidden="true" id="pic">
+        <!-- Optional: replace src with a photo URL or keep the emoji -->
+        <span style="font-size:28px">🍓</span>
+      </div>
+      <div class="details">
+        <b>Will you be my Valentine?</b>
+        <span id="line">Dinner + a cute surprise — just you and me.</span>
+      </div>
+    </section>
+
+    <div class="row">
+      <div class="pill">
+        <small>When</small>
+        <div id="when">Friday 14 Feb, 7:00pm</div>
+      </div>
+      <div class="pill">
+        <small>Where</small>
+        <div id="where">Our secret spot ✨</div>
+      </div>
+      <div class="pill">
+        <small>Dress code</small>
+        <div id="dress">Cute & comfy</div>
+      </div>
+      <div class="pill">
+        <small>After</small>
+        <div id="after">Dessert + a walk</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="yes" id="yesBtn">Yes 💖</button>
+      <button class="maybe" id="maybeBtn">I need a hint 😄</button>
+      <a class="btn maybe" id="addCal" href="#" rel="noopener">Add to Calendar 📅</a>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <p class="note">
+      P.S. If you add this to your Home Screen in Safari, it looks like an app 🙂
+    </p>
+  </main>
+
+  <script>
+    // ==== EDIT THESE ====
+    const config = {
+      name: "Babe",                         // her name / nickname
+      line: "Dinner + a cute surprise — just you and me.",
+      whenText: "Friday 14 Feb, 7:00pm",
+      whereText: "Pick-up at yours 😉",
+      dress: "Something you feel pretty in",
+      after: "Dessert + a walk",
+      // Optional: set a photo URL (https://...) or leave null
+      photoUrl: null,
+      // Calendar details
+      start: "2026-02-14T19:00:00",          // local time
+      end:   "2026-02-14T22:00:00",
+      location: "London",
+      title: "Valentine’s Date 💖",
+      description: "Dinner + surprise. Love you."
+    };
+
+    // ==== APPLY TEXT ====
+    document.getElementById("name").textContent = config.name;
+    document.getElementById("line").textContent = config.line;
+    document.getElementById("when").textContent = config.whenText;
+    document.getElementById("where").textContent = config.whereText;
+    document.getElementById("dress").textContent = config.dress;
+    document.getElementById("after").textContent = config.after;
+
+    // ==== OPTIONAL PHOTO ====
+    if (config.photoUrl) {
+      const pic = document.getElementById("pic");
+      pic.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = config.photoUrl;
+      img.alt = "Photo";
+      pic.appendChild(img);
+    }
+
+    // ==== TOAST ====
+    const toast = (msg) => {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => t.style.display = "none", 3500);
+    };
+
+    document.getElementById("yesBtn").addEventListener("click", () => {
+      toast("YAY 💖 Screenshot this and send me ‘YES’ 😘");
+      // Optional: confetti-ish vibration on mobile
+      if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
+    });
+
+    document.getElementById("maybeBtn").addEventListener("click", () => {
+      toast("Hint: you should press YES 😄");
+    });
+
+    // ==== CALENDAR (.ics) DOWNLOAD ====
+    function toICSDate(localIso) {
+      // Convert "YYYY-MM-DDTHH:mm:ss" local to UTC-ish format for ICS.
+      // For simple personal use, this is fine; iOS will still interpret nicely.
+      const d = new Date(localIso);
+      const pad = (n) => String(n).padStart(2, "0");
+      return d.getUTCFullYear()
+        + pad(d.getUTCMonth()+1)
+        + pad(d.getUTCDate()) + "T"
+        + pad(d.getUTCHours())
+        + pad(d.getUTCMinutes())
+        + pad(d.getUTCSeconds()) + "Z";
+    }
+
+    const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Valentine Invite//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+DTSTAMP:${toICSDate(new Date().toISOString().slice(0,19))}
+DTSTART:${toICSDate(config.start)}
+DTEND:${toICSDate(config.end)}
+SUMMARY:${config.title}
+LOCATION:${config.location}
+DESCRIPTION:${config.description}
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const addCal = document.getElementById("addCal");
+    addCal.href = url;
+    addCal.download = "valentines.ics";
+  </script>
+</body>
+</html>
