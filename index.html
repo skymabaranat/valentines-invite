@@ -3,269 +3,343 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#ff4d6d" />
-  <title>Valentine’s Invite 💌</title>
+  <title>Open Me 💌</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Confetti / Fireworks -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
   <style>
     :root{
       --bg1:#fff0f5;
       --bg2:#ffe4ec;
-      --card:#ffffffcc;
-      --text:#1b1b1b;
+      --ink:#1a1a1a;
       --accent:#ff4d6d;
       --accent2:#ff7aa2;
+      --paper:#fff7e6;
+      --paper2:#ffefcc;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      min-height:100svh;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background: radial-gradient(1000px 600px at 10% 10%, var(--bg2), transparent),
-                  radial-gradient(900px 500px at 90% 20%, #ffd1dc, transparent),
-                  linear-gradient(180deg, var(--bg1), #fff);
+      font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(900px 500px at 15% 20%, #ffd1dc, transparent),
+        radial-gradient(1000px 600px at 85% 25%, var(--bg2), transparent),
+        linear-gradient(180deg, var(--bg1), #fff);
       display:grid;
       place-items:center;
       padding:24px;
+      overflow:hidden;
     }
-    .card{
-      width:min(520px, 100%);
-      background:var(--card);
-      border:1px solid #ffffff;
-      backdrop-filter: blur(10px);
-      border-radius:24px;
-      padding:22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+
+    .stage{
+      width:min(560px, 100%);
       position:relative;
+    }
+
+    /* Letter */
+    .letterWrap{
+      position:relative;
+      perspective:1200px;
+      width:min(520px, 100%);
+      margin:0 auto;
+    }
+    .envelope{
+      border-radius:22px;
+      padding:18px;
+      background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:0 24px 60px rgba(0,0,0,.12);
+      backdrop-filter: blur(10px);
       overflow:hidden;
     }
-    .hearts{
-      position:absolute; inset:-20px;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(255,77,109,.18) 0 40%, transparent 41%),
-        radial-gradient(circle at 80% 20%, rgba(255,122,162,.18) 0 35%, transparent 36%),
-        radial-gradient(circle at 60% 85%, rgba(255,77,109,.14) 0 38%, transparent 39%);
-      pointer-events:none;
-      filter: blur(1px);
-    }
-    h1{margin:0 0 6px; font-size:28px; letter-spacing:-0.02em;}
-    .sub{margin:0 0 14px; opacity:.85}
-    .hero{
+    .paper{
+      background: linear-gradient(180deg, var(--paper), var(--paper2));
       border-radius:18px;
-      background: linear-gradient(135deg, rgba(255,77,109,.18), rgba(255,122,162,.18));
-      padding:14px;
-      display:flex;
-      gap:14px;
-      align-items:center;
-      margin:14px 0 16px;
-    }
-    .pic{
-      width:64px; height:64px; border-radius:18px;
-      background:#fff;
-      display:grid; place-items:center;
       border:1px solid rgba(0,0,0,.06);
-      overflow:hidden;
-      flex:0 0 auto;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
+      padding:22px;
+      position:relative;
+      min-height:240px;
+      transform-origin: top;
+      transform: rotateX(0deg);
+      transition: transform 700ms cubic-bezier(.2,.8,.2,1);
     }
-    .pic img{width:100%; height:100%; object-fit:cover; display:block}
-    .details{line-height:1.35}
-    .details b{display:block; margin-bottom:2px}
-    .row{
+    .paper.open{
+      transform: rotateX(-180deg);
+    }
+
+    .seal{
+      position:absolute;
+      inset:auto 18px 18px auto;
+      width:44px; height:44px;
+      border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2)),
+                  linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 14px 24px rgba(255,77,109,.28);
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-top:10px;
+      place-items:center;
+      color:white;
+      font-weight:800;
+      user-select:none;
     }
-    .pill{
+
+    .openMe{
+      display:grid;
+      place-items:center;
+      height:100%;
+      text-align:center;
+      padding:26px 12px;
+      gap:10px;
+      user-select:none;
+    }
+    .openMe h1{
+      margin:0;
+      font-size:34px;
+      letter-spacing:-0.03em;
+    }
+    .openMe p{margin:0; opacity:.8}
+    .tapHint{
+      margin-top:6px;
+      font-size:13px;
+      opacity:.7;
+    }
+
+    /* Reveal card (after opening) */
+    .card{
+      margin-top:18px;
+      border-radius:22px;
+      padding:20px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(255,255,255,.95);
+      box-shadow:0 18px 50px rgba(0,0,0,.12);
+      backdrop-filter: blur(10px);
+      animation: pop 520ms cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes pop {
+      from { transform: translateY(10px); opacity:0; }
+      to { transform: translateY(0px); opacity:1; }
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:28px;
+      letter-spacing:-0.02em;
+    }
+    .card .sub{margin:0 0 14px; opacity:.85; line-height:1.45}
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:10px 0 16px;
+    }
+    .chip{
       background:#fff;
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:16px;
-      padding:12px 12px;
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:600;
+      font-size:14px;
     }
-    .pill small{display:block; opacity:.7; margin-bottom:4px}
-    .pill div{font-weight:600}
     .actions{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
-      margin-top:16px;
     }
-    button,a.btn{
-      appearance:none;
+    button{
       border:0;
       border-radius:16px;
-      padding:12px 14px;
-      font-weight:700;
+      padding:12px 16px;
+      font-weight:800;
       cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      font-size:16px;
     }
-    .yes{background:linear-gradient(135deg, var(--accent), var(--accent2)); color:white; box-shadow:0 10px 22px rgba(255,77,109,.25)}
-    .maybe{background:#fff; border:1px solid rgba(0,0,0,.08); color:#111}
+    .yes{
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#fff;
+      box-shadow:0 14px 26px rgba(255,77,109,.25);
+    }
+    .no{
+      background:#fff;
+      color:#111;
+      border:1px solid rgba(0,0,0,.10);
+    }
     .note{
-      margin-top:14px;
+      margin-top:12px;
       font-size:13px;
       opacity:.75;
       line-height:1.45;
-    }
-    .toast{
-      margin-top:14px;
-      display:none;
-      background:#0f172a;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:14px;
-    }
-    @media (max-width:420px){
-      .row{grid-template-columns:1fr}
-      h1{font-size:26px}
     }
   </style>
 </head>
 
 <body>
-  <main class="card" role="main" aria-label="Valentine invitation">
-    <div class="hearts"></div>
+  <div id="root"></div>
 
-    <h1>Hey <span id="name">My Love</span> 💌</h1>
-    <p class="sub">I made you a tiny page for a tiny question…</p>
+  <script type="text/babel">
+    const { useEffect, useMemo, useRef, useState } = React;
 
-    <section class="hero" aria-label="Invite details">
-      <div class="pic" aria-hidden="true" id="pic">
-        <!-- Optional: replace src with a photo URL or keep the emoji -->
-        <span style="font-size:28px">🍓</span>
-      </div>
-      <div class="details">
-        <b>Will you be my Valentine?</b>
-        <span id="line">Dinner + a cute surprise — just you and me.</span>
-      </div>
-    </section>
-
-    <div class="row">
-      <div class="pill">
-        <small>When</small>
-        <div id="when">Friday 14 Feb, 7:00pm</div>
-      </div>
-      <div class="pill">
-        <small>Where</small>
-        <div id="where">Our secret spot ✨</div>
-      </div>
-      <div class="pill">
-        <small>Dress code</small>
-        <div id="dress">Cute & comfy</div>
-      </div>
-      <div class="pill">
-        <small>After</small>
-        <div id="after">Dessert + a walk</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="yes" id="yesBtn">Yes 💖</button>
-      <button class="maybe" id="maybeBtn">I need a hint 😄</button>
-      <a class="btn maybe" id="addCal" href="#" rel="noopener">Add to Calendar 📅</a>
-    </div>
-
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <p class="note">
-      P.S. If you add this to your Home Screen in Safari, it looks like an app 🙂
-    </p>
-  </main>
-
-  <script>
-    // ==== EDIT THESE ====
-    const config = {
-      name: "Babe",                         // her name / nickname
-      line: "Dinner + a cute surprise — just you and me.",
-      whenText: "Friday 14 Feb, 7:00pm",
-      whereText: "Pick-up at yours 😉",
-      dress: "Something you feel pretty in",
-      after: "Dessert + a walk",
-      // Optional: set a photo URL (https://...) or leave null
-      photoUrl: null,
-      // Calendar details
-      start: "2026-02-14T19:00:00",          // local time
-      end:   "2026-02-14T22:00:00",
-      location: "London",
-      title: "Valentine’s Date 💖",
-      description: "Dinner + surprise. Love you."
-    };
-
-    // ==== APPLY TEXT ====
-    document.getElementById("name").textContent = config.name;
-    document.getElementById("line").textContent = config.line;
-    document.getElementById("when").textContent = config.whenText;
-    document.getElementById("where").textContent = config.whereText;
-    document.getElementById("dress").textContent = config.dress;
-    document.getElementById("after").textContent = config.after;
-
-    // ==== OPTIONAL PHOTO ====
-    if (config.photoUrl) {
-      const pic = document.getElementById("pic");
-      pic.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = config.photoUrl;
-      img.alt = "Photo";
-      pic.appendChild(img);
+    // ---- Effects (confetti + fireworks) ----
+    function burstConfetti() {
+      // A nice "letter opened" pop
+      confetti({
+        particleCount: 140,
+        spread: 80,
+        origin: { x: 0.5, y: 0.25 },
+        startVelocity: 45,
+        scalar: 1.0
+      });
+      confetti({
+        particleCount: 80,
+        spread: 120,
+        origin: { x: 0.5, y: 0.30 },
+        startVelocity: 35,
+        scalar: 0.9
+      });
     }
 
-    // ==== TOAST ====
-    const toast = (msg) => {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.style.display = "block";
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => t.style.display = "none", 3500);
-    };
+    function fireworksShow() {
+      // Quick fireworks-like sequence
+      const duration = 1800;
+      const end = Date.now() + duration;
 
-    document.getElementById("yesBtn").addEventListener("click", () => {
-      toast("YAY 💖 Screenshot this and send me ‘YES’ 😘");
-      // Optional: confetti-ish vibration on mobile
-      if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
-    });
+      (function frame() {
+        // left burst
+        confetti({
+          particleCount: 35,
+          spread: 70,
+          startVelocity: 55,
+          origin: { x: 0.25, y: 0.65 },
+          scalar: 1.0,
+          ticks: 220
+        });
+        // right burst
+        confetti({
+          particleCount: 35,
+          spread: 70,
+          startVelocity: 55,
+          origin: { x: 0.75, y: 0.65 },
+          scalar: 1.0,
+          ticks: 220
+        });
+        // center burst
+        confetti({
+          particleCount: 45,
+          spread: 90,
+          startVelocity: 65,
+          origin: { x: 0.5, y: 0.55 },
+          scalar: 1.05,
+          ticks: 240
+        });
 
-    document.getElementById("maybeBtn").addEventListener("click", () => {
-      toast("Hint: you should press YES 😄");
-    });
-
-    // ==== CALENDAR (.ics) DOWNLOAD ====
-    function toICSDate(localIso) {
-      // Convert "YYYY-MM-DDTHH:mm:ss" local to UTC-ish format for ICS.
-      // For simple personal use, this is fine; iOS will still interpret nicely.
-      const d = new Date(localIso);
-      const pad = (n) => String(n).padStart(2, "0");
-      return d.getUTCFullYear()
-        + pad(d.getUTCMonth()+1)
-        + pad(d.getUTCDate()) + "T"
-        + pad(d.getUTCHours())
-        + pad(d.getUTCMinutes())
-        + pad(d.getUTCSeconds()) + "Z";
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
     }
 
-    const ics =
-`BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Valentine Invite//EN
-CALSCALE:GREGORIAN
-BEGIN:VEVENT
-DTSTAMP:${toICSDate(new Date().toISOString().slice(0,19))}
-DTSTART:${toICSDate(config.start)}
-DTEND:${toICSDate(config.end)}
-SUMMARY:${config.title}
-LOCATION:${config.location}
-DESCRIPTION:${config.description}
-END:VEVENT
-END:VCALENDAR`;
+    // ---- Main UI ----
+    function App() {
+      // EDIT THESE:
+      const config = useMemo(() => ({
+        nickname: "My Love",
+        question: "Will you be my Valentine?",
+        when: "Friday • 7pm",
+        where: "Pick-up at yours 😉",
+        vibe: "Dinner + surprise ✨",
+        note: "P.S. I love you more than you know."
+      }), []);
 
-    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const addCal = document.getElementById("addCal");
-    addCal.href = url;
-    addCal.download = "valentines.ics";
+      const [opened, setOpened] = useState(false);
+      const [showInvite, setShowInvite] = useState(false);
+      const [noIsYes, setNoIsYes] = useState(false);
+      const didBurstRef = useRef(false);
+
+      const openLetter = () => {
+        if (opened) return;
+        setOpened(true);
+
+        // confetti on open (once)
+        if (!didBurstRef.current) {
+          didBurstRef.current = true;
+          burstConfetti();
+          if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+        }
+
+        // reveal the invite after the "flip" animation
+        window.setTimeout(() => setShowInvite(true), 620);
+      };
+
+      const onYes = () => {
+        fireworksShow();
+        if (navigator.vibrate) navigator.vibrate([40, 20, 40, 20, 70]);
+      };
+
+      const onNo = () => {
+        // turns into Yes
+        setNoIsYes(true);
+        // tiny playful confetti
+        confetti({ particleCount: 30, spread: 60, origin: { x: 0.5, y: 0.45 } });
+        if (navigator.vibrate) navigator.vibrate(20);
+      };
+
+      return (
+        <div className="stage">
+          <div className="letterWrap">
+            <div
+              className="envelope"
+              role="button"
+              aria-label="Open letter"
+              onClick={openLetter}
+              onKeyDown={(e) => (e.key === "Enter" ? openLetter() : null)}
+              tabIndex={0}
+            >
+              <div className={"paper " + (opened ? "open" : "")}>
+                <div className="openMe">
+                  <div style={{fontSize: "38px"}}>💌</div>
+                  <h1>Open me</h1>
+                  <p>Tap the letter</p>
+                  <div className="tapHint">(yes, this is your official invite)</div>
+                </div>
+                <div className="seal">♡</div>
+              </div>
+            </div>
+          </div>
+
+          {showInvite && (
+            <div className="card" aria-label="Invitation">
+              <h2>Hey {config.nickname} 💖</h2>
+              <p className="sub">{config.question}</p>
+
+              <div className="chips">
+                <span className="chip">🗓️ {config.when}</span>
+                <span className="chip">📍 {config.where}</span>
+                <span className="chip">✨ {config.vibe}</span>
+              </div>
+
+              <div className="actions">
+                <button className="yes" onClick={onYes}>Yes 💖</button>
+
+                {!noIsYes ? (
+                  <button className="no" onClick={onNo}>No 🙃</button>
+                ) : (
+                  <button className="yes" onClick={onYes}>Yes 💖</button>
+                )}
+              </div>
+
+              <div className="note">{config.note}</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
