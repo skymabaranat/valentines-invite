@@ -24,11 +24,13 @@
       --paper:#fff7e6;
       --paper2:#ffefcc;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
+
     body{
       margin:0;
-      font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:-apple-system, BlinkMacSystemFont, system-ui;
       color:var(--ink);
       background:
         radial-gradient(900px 500px at 15% 20%, #ffd1dc, transparent),
@@ -40,299 +42,212 @@
       overflow:hidden;
     }
 
-    .stage{
-      width:min(560px, 100%);
-      position:relative;
+    /* 🌊 River + Boats */
+    .boats{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    .boats::before,
+    .boats::after{
+      content:"";
+      position:absolute;
+      bottom:8%;
+      width:260px;
+      height:120px;
+      background:rgba(255,255,255,.35);
+      border-radius:0 0 120px 120px;
+      box-shadow:inset 0 -10px 0 rgba(0,0,0,.05),
+                 0 18px 30px rgba(0,0,0,.12);
+      filter:blur(1px);
+    }
+    .boats::before{left:-60px; transform:rotate(-2deg)}
+    .boats::after{right:-70px; transform:rotate(2deg)}
+
+    .river{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height:35%;
+      background:linear-gradient(
+        180deg,
+        rgba(180,220,255,.15),
+        rgba(120,170,220,.28)
+      );
+      z-index:0;
     }
 
-    /* Letter */
-    .letterWrap{
+    .stage{
+      width:min(560px,100%);
       position:relative;
-      perspective:1200px;
-      width:min(520px, 100%);
-      margin:0 auto;
+      z-index:1;
     }
+
+    /* ✉️ Letter */
+    .letterWrap{perspective:1200px}
     .envelope{
       border-radius:22px;
       padding:18px;
-      background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
-      border:1px solid rgba(255,255,255,.9);
+      background:rgba(255,255,255,.85);
       box-shadow:0 24px 60px rgba(0,0,0,.12);
-      backdrop-filter: blur(10px);
-      overflow:hidden;
+      backdrop-filter:blur(10px);
     }
     .paper{
-      background: linear-gradient(180deg, var(--paper), var(--paper2));
+      background:linear-gradient(180deg,var(--paper),var(--paper2));
       border-radius:18px;
-      border:1px solid rgba(0,0,0,.06);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.4);
-      padding:22px;
-      position:relative;
+      padding:24px;
       min-height:240px;
-      transform-origin: top;
-      transform: rotateX(0deg);
-      transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+      transform-origin:top;
+      transition:transform 700ms cubic-bezier(.2,.8,.2,1);
     }
-    .paper.open{
-      transform: rotateX(-180deg);
-    }
-
-    .seal{
-      position:absolute;
-      inset:auto 18px 18px auto;
-      width:44px; height:44px;
-      border-radius:999px;
-      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2)),
-                  linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow:0 14px 24px rgba(255,77,109,.28);
-      display:grid;
-      place-items:center;
-      color:white;
-      font-weight:800;
-      user-select:none;
-    }
+    .paper.open{transform:rotateX(-180deg)}
 
     .openMe{
       display:grid;
       place-items:center;
       height:100%;
-      text-align:center;
-      padding:26px 12px;
       gap:10px;
-      user-select:none;
+      text-align:center;
     }
-    .openMe h1{
-      margin:0;
-      font-size:34px;
-      letter-spacing:-0.03em;
-    }
-    .openMe p{margin:0; opacity:.8}
-    .tapHint{
-      margin-top:6px;
-      font-size:13px;
-      opacity:.7;
-    }
+    .openMe h1{margin:0;font-size:34px}
+    .openMe p{margin:0;opacity:.8}
 
-    /* Reveal card (after opening) */
+    /* 💌 Card */
     .card{
       margin-top:18px;
-      border-radius:22px;
       padding:20px;
+      border-radius:22px;
       background:rgba(255,255,255,.85);
-      border:1px solid rgba(255,255,255,.95);
       box-shadow:0 18px 50px rgba(0,0,0,.12);
-      backdrop-filter: blur(10px);
-      animation: pop 520ms cubic-bezier(.2,.8,.2,1);
+      animation:pop .5s ease;
     }
-    @keyframes pop {
-      from { transform: translateY(10px); opacity:0; }
-      to { transform: translateY(0px); opacity:1; }
+    @keyframes pop{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:none}
     }
-    .card h2{
-      margin:0 0 8px;
-      font-size:28px;
-      letter-spacing:-0.02em;
-    }
-    .card .sub{margin:0 0 14px; opacity:.85; line-height:1.45}
-    .chips{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin:10px 0 16px;
-    }
+
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px}
     .chip{
       background:#fff;
-      border:1px solid rgba(0,0,0,.08);
       border-radius:999px;
       padding:8px 12px;
+      border:1px solid rgba(0,0,0,.1);
       font-weight:600;
-      font-size:14px;
     }
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+
     button{
       border:0;
       border-radius:16px;
       padding:12px 16px;
+      font-size:16px;
       font-weight:800;
       cursor:pointer;
-      font-size:16px;
     }
     .yes{
-      background:linear-gradient(135deg, var(--accent), var(--accent2));
-      color:#fff;
-      box-shadow:0 14px 26px rgba(255,77,109,.25);
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:white;
     }
     .no{
-      background:#fff;
-      color:#111;
-      border:1px solid rgba(0,0,0,.10);
+      background:white;
+      border:1px solid rgba(0,0,0,.15);
     }
-    .note{
-      margin-top:12px;
-      font-size:13px;
-      opacity:.75;
-      line-height:1.45;
+
+    /* 🌀 No button panic spin */
+    @keyframes panicSpin{
+      0%{transform:translate(0,0) rotate(0)}
+      25%{transform:translate(120px,-80px) rotate(120deg)}
+      50%{transform:translate(-140px,60px) rotate(240deg)}
+      75%{transform:translate(100px,100px) rotate(360deg)}
+      100%{transform:translate(0,0) rotate(540deg)}
     }
+    .spinning{animation:panicSpin 900ms cubic-bezier(.6,-0.28,.74,.05)}
   </style>
 </head>
 
 <body>
+  <div class="boats"></div>
+  <div class="river"></div>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useEffect, useMemo, useRef, useState } = React;
+    const { useState, useRef } = React;
 
-    // ---- Effects (confetti + fireworks) ----
-    function burstConfetti() {
-      // A nice "letter opened" pop
-      confetti({
-        particleCount: 140,
-        spread: 80,
-        origin: { x: 0.5, y: 0.25 },
-        startVelocity: 45,
-        scalar: 1.0
-      });
-      confetti({
-        particleCount: 80,
-        spread: 120,
-        origin: { x: 0.5, y: 0.30 },
-        startVelocity: 35,
-        scalar: 0.9
-      });
+    function confettiBurst(){
+      confetti({ particleCount:140, spread:90, origin:{x:.5,y:.25} });
     }
 
-    function fireworksShow() {
-      // Quick fireworks-like sequence
-      const duration = 1800;
-      const end = Date.now() + duration;
-
-      (function frame() {
-        // left burst
-        confetti({
-          particleCount: 35,
-          spread: 70,
-          startVelocity: 55,
-          origin: { x: 0.25, y: 0.65 },
-          scalar: 1.0,
-          ticks: 220
-        });
-        // right burst
-        confetti({
-          particleCount: 35,
-          spread: 70,
-          startVelocity: 55,
-          origin: { x: 0.75, y: 0.65 },
-          scalar: 1.0,
-          ticks: 220
-        });
-        // center burst
-        confetti({
-          particleCount: 45,
-          spread: 90,
-          startVelocity: 65,
-          origin: { x: 0.5, y: 0.55 },
-          scalar: 1.05,
-          ticks: 240
-        });
-
-        if (Date.now() < end) requestAnimationFrame(frame);
+    function fireworks(){
+      const end = Date.now() + 1800;
+      (function frame(){
+        confetti({ particleCount:30, spread:80, origin:{x:.25,y:.6} });
+        confetti({ particleCount:30, spread:80, origin:{x:.75,y:.6} });
+        confetti({ particleCount:40, spread:100, origin:{x:.5,y:.5} });
+        if(Date.now() < end) requestAnimationFrame(frame);
       })();
     }
 
-    // ---- Main UI ----
-    function App() {
-      // EDIT THESE:
-      const config = useMemo(() => ({
-        nickname: "My Love",
-        question: "Will you be my Valentine?",
-        when: "Friday • 7pm",
-        where: "Pick-up at yours 😉",
-        vibe: "Dinner + surprise ✨",
-        note: "P.S. I love you more than you know."
-      }), []);
-
-      const [opened, setOpened] = useState(false);
-      const [showInvite, setShowInvite] = useState(false);
-      const [noIsYes, setNoIsYes] = useState(false);
-      const didBurstRef = useRef(false);
+    function App(){
+      const [opened,setOpened] = useState(false);
+      const [show,setShow] = useState(false);
+      const [noState,setNoState] = useState("normal");
+      const once = useRef(false);
 
       const openLetter = () => {
-        if (opened) return;
+        if(opened) return;
         setOpened(true);
-
-        // confetti on open (once)
-        if (!didBurstRef.current) {
-          didBurstRef.current = true;
-          burstConfetti();
-          if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+        if(!once.current){
+          once.current = true;
+          confettiBurst();
         }
-
-        // reveal the invite after the "flip" animation
-        window.setTimeout(() => setShowInvite(true), 620);
-      };
-
-      const onYes = () => {
-        fireworksShow();
-        if (navigator.vibrate) navigator.vibrate([40, 20, 40, 20, 70]);
+        setTimeout(()=>setShow(true),650);
       };
 
       const onNo = () => {
-        // turns into Yes
-        setNoIsYes(true);
-        // tiny playful confetti
-        confetti({ particleCount: 30, spread: 60, origin: { x: 0.5, y: 0.45 } });
-        if (navigator.vibrate) navigator.vibrate(20);
+        if(noState!=="normal") return;
+        setNoState("spinning");
+        setTimeout(()=>setNoState("yes"),900);
       };
 
       return (
         <div className="stage">
           <div className="letterWrap">
-            <div
-              className="envelope"
-              role="button"
-              aria-label="Open letter"
-              onClick={openLetter}
-              onKeyDown={(e) => (e.key === "Enter" ? openLetter() : null)}
-              tabIndex={0}
-            >
-              <div className={"paper " + (opened ? "open" : "")}>
+            <div className="envelope" onClick={openLetter}>
+              <div className={"paper "+(opened?"open":"")}>
                 <div className="openMe">
-                  <div style={{fontSize: "38px"}}>💌</div>
+                  <div style={{fontSize:38}}>💌</div>
                   <h1>Open me</h1>
                   <p>Tap the letter</p>
-                  <div className="tapHint">(yes, this is your official invite)</div>
                 </div>
-                <div className="seal">♡</div>
               </div>
             </div>
           </div>
 
-          {showInvite && (
-            <div className="card" aria-label="Invitation">
-              <h2>Hey {config.nickname} 💖</h2>
-              <p className="sub">{config.question}</p>
+          {show && (
+            <div className="card">
+              <h2>Hey my love 💖</h2>
+              <p>Will you be my Valentine?</p>
 
               <div className="chips">
-                <span className="chip">🗓️ {config.when}</span>
-                <span className="chip">📍 {config.where}</span>
-                <span className="chip">✨ {config.vibe}</span>
+                <span className="chip">🗓️ Friday</span>
+                <span className="chip">📍 Barge East</span>
+                <span className="chip">✨ Dinner on the river</span>
               </div>
 
               <div className="actions">
-                <button className="yes" onClick={onYes}>Yes 💖</button>
+                <button className="yes" onClick={fireworks}>Yes 💖</button>
 
-                {!noIsYes ? (
+                {noState==="normal" && (
                   <button className="no" onClick={onNo}>No 🙃</button>
-                ) : (
-                  <button className="yes" onClick={onYes}>Yes 💖</button>
+                )}
+                {noState==="spinning" && (
+                  <button className="no spinning">No 😳</button>
+                )}
+                {noState==="yes" && (
+                  <button className="yes" onClick={fireworks}>Yes 💖</button>
                 )}
               </div>
-
-              <div className="note">{config.note}</div>
             </div>
           )}
         </div>
